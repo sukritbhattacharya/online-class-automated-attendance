@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <!--<script src="jquery-3.5.1.min.js"></script>-->
+  <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>-->
   <script defer src="face-api.min.js"></script>
   <script defer src="script.js"></script>
   <style>
@@ -25,6 +27,10 @@
       color:chocolate;
       font-size: medium;
     }
+    #status{
+      color:blue;
+      font-size: medium;
+    }
   </style>
 </head>
 <body>
@@ -39,6 +45,7 @@
 
   <video id="video" width="720" height="560" autoplay="true"  ></video>
   <h2 id="displayPercentage"></h2>
+  <p id="status"></p>
  <img id="imageshow"/> 
 </body>
 <canvas id="gameCanvas" width="720" height="560" style="display: none;"></canvas>

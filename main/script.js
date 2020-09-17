@@ -166,9 +166,59 @@ video.addEventListener('playing', () => {
     document.getElementById("imageshow").setAttribute("src",document.getElementById("gameCanvas").toDataURL('image/jpg'))
     let dispImg = document.getElementById("imageshow").src
      console.log(dispImg);
+     document.getElementById("imageshow").style.display="none";
      //Usage example:
 var file = dataURLtoFile(dispImg,'hello.png');
 console.log(file);
+
+//API CALL
+var formdata = new FormData();
+formdata.append("user_id", "srikanth");
+formdata.append("app_id", "kushi");
+formdata.append("image", file, file.name);
+formdata.append("image2", file, file.name);
+formdata.append("n", "8");
+formdata.append("deviceOs", "A");
+
+var requestOptions = {
+  method: 'POST',
+  body: formdata,
+  redirect: 'follow'
+};
+
+fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOptions)
+  .then(function(response) { 
+  //  console.log(response.body);
+ 
+  let status = response.status;
+  //  console.log(status);
+
+  let statusText = response.statusText;
+  //  console.log(v);
+    if(status == 200) {
+      document.getElementById("status").innerHTML = status.toString() +" "+ statusText +" "+ "Success!";
+      console.log(statusText);
+    }
+    if(status == 404 || status == 424 || status == 500){
+      document.getElementById("status").innerHTML = status.toString() +" "+ statusText;
+      document.getElementById("status").style.color = "red";
+      console.log(statusText);
+
+    }
+  /*if(status == 404){
+    console.log("face recognition failed")
+  }
+  if(status == 424){
+    console.log()
+  }*/
+  })
+  
+  //.then(result => console.log(result))
+  .catch(function(error){ 
+    console.log('error', error)
+  });
+  
+}
 
 ////////////////////////
 
@@ -189,7 +239,7 @@ canvas.toBlob(function(blob) {
 ////////////////////////////////////////////////////
 
      //sendImg = async  ()=>{
-     var formdata = new FormData();
+/*     var formdata = new FormData();
      formdata.append("user_id", "srikanth");
      formdata.append("app_id", "kushi");
      formdata.append("image", file, file.name);
@@ -203,13 +253,55 @@ var requestOptions = {
   redirect: 'follow'
 };
 
+
  fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOptions)
-  .then(response => response.text())
+  .then(function(response) {
+    return response.body()
+  
+  })
   .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-}
+  .catch(
+    function(error) { 
+      if(error == 404 || error == 424){
+      //console.log('error', err)
+      console.log(error.message)
+      }
+    }
 
+    );
+}*/
+/////////////////jquery
 
+/*
+var form = new FormData();
+form.append("user_id", "srikanth");
+form.append("app_id", "kushi");
+form.append("image", file, file.name);
+form.append("image2", file, file.name);
+form.append("n", "8");
+form.append("deviceOs", "A");
+
+var settings = {
+  "url": "https://staging.vishwamcorp.com/v2/single_gesture_ios",
+  "method": "POST",
+  "timeout": 0,
+  "processData": false,
+  "mimeType": "multipart/form-data",
+  "contentType": false,
+  "data": form
+};
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+  console.log("on success");
+});
+
+$.ajax(settings).error(function (response) {
+  console.log(response.status);
+  console.log("on failure");
+});
+    }
+*/
 
 
       
