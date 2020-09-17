@@ -13,6 +13,7 @@ Below is a screenshot of a sample room (<a href="http://127.0.0.1:1337/jk4qhh" t
 At the moment WebRTC is supported only by a limited number of browsers: Chrome, Firefox and Opera.
 
 ## How to run the code
+Enter in to Video-conference folder.
 1. `$ npm install` (you may need root access)
 2. `$ node server.js`
 3. Access the app from a WebRTC capable webbrowser through <a href="http://127.0.0.1:1337/" target="_blank">http://127.0.0.1:1337/</a>
