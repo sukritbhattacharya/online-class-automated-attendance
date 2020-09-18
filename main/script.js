@@ -98,8 +98,15 @@ let form  = document.getElementById('form');
 document.getElementById("video").style.display = "none";
 
 form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+
+  
   let classDurationInput = document.getElementById("class-duration").value
+  let nameINput = document.getElementById("enter-name").value
+  let nameInputLoweCase = nameINput.toLowerCase();
   console.log(classDurationInput);
+  console.log(nameInputLoweCase);
 
   if (classDurationInput){
     
@@ -124,17 +131,21 @@ Promise.all([
 //if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 function startVideo() {
   navigator.mediaDevices.getUserMedia(
-    { video: true }).then(function(stream){
+    { video: true })
+    .then(function(stream){
     video.srcObject = stream;
     //console.log(stream)
     video.play();
-    }
-    );
+    });
     err => console.error(err)
+
+    
 }
 //}
 
 video.addEventListener('playing', () => {
+
+  
   const canvas = faceapi.createCanvasFromMedia(video)
   
   document.body.append(canvas)
@@ -173,7 +184,7 @@ console.log(file);
 
 //API CALL
 var formdata = new FormData();
-formdata.append("user_id", "srikanth");
+formdata.append("user_id", nameInputLoweCase);
 formdata.append("app_id", "kushi");
 formdata.append("image", file, file.name);
 formdata.append("image2", file, file.name);
@@ -217,91 +228,13 @@ fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOp
   .catch(function(error){ 
     console.log('error', error)
   });
-  
+
+
 }
 
 ////////////////////////
 
-/*var canvas = document.getElementById('gameCanvas');
-
-canvas.toBlob(function(blob) {
-  var newImg = document.createElement('img'),
-      url = URL.createObjectURL(blob);
-
-  newImg.onload = function() {
-    // no longer need to read the blob so it's revoked
-    URL.revokeObjectURL(url);
-  };
-
-  newImg.src = url;
-  document.body.appendChild(newImg);
-});*/
-////////////////////////////////////////////////////
-
-     //sendImg = async  ()=>{
-/*     var formdata = new FormData();
-     formdata.append("user_id", "srikanth");
-     formdata.append("app_id", "kushi");
-     formdata.append("image", file, file.name);
-     formdata.append("image2", file, file.name);
-     formdata.append("n", "8");
-     formdata.append("deviceOs", "A");
-
-var requestOptions = {
-  method: 'POST',
-  body: formdata,
-  redirect: 'follow'
-};
-
-
- fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOptions)
-  .then(function(response) {
-    return response.body()
-  
-  })
-  .then(result => console.log(result))
-  .catch(
-    function(error) { 
-      if(error == 404 || error == 424){
-      //console.log('error', err)
-      console.log(error.message)
-      }
-    }
-
-    );
-}*/
-/////////////////jquery
-
-/*
-var form = new FormData();
-form.append("user_id", "srikanth");
-form.append("app_id", "kushi");
-form.append("image", file, file.name);
-form.append("image2", file, file.name);
-form.append("n", "8");
-form.append("deviceOs", "A");
-
-var settings = {
-  "url": "https://staging.vishwamcorp.com/v2/single_gesture_ios",
-  "method": "POST",
-  "timeout": 0,
-  "processData": false,
-  "mimeType": "multipart/form-data",
-  "contentType": false,
-  "data": form
-};
-
-$.ajax(settings).done(function (response) {
-  console.log(response);
-  console.log("on success");
-});
-
-$.ajax(settings).error(function (response) {
-  console.log(response.status);
-  console.log("on failure");
-});
-    }
-*/
+ 
 
 
       
@@ -338,11 +271,67 @@ $.ajax(settings).error(function (response) {
       //console.log(total);
       let ratio = pl/total;
       console.log(ratio);
-      let presentPercentage = "The present percentage is" + "" + ratio*100;
+      let pPercentage = ratio*100;
+      let presentPercentage = "The present percentage is" + "" + pPercentage;
       console.log(presentPercentage);
       document.getElementById("displayPercentage").innerHTML = presentPercentage;
       //console.log(present.length);
       //console.log(absent.length);
+      
+      ///////////////////////////////////////FIRE BASE//////////////////////////////////////
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyCgp29SOddNIsgpQ2bWg8_xKkDeo35abTs",
+    authDomain: "detection-percentage.firebaseapp.com",
+    databaseURL: "https://detection-percentage.firebaseio.com",
+    projectId: "detection-percentage",
+    storageBucket: "detection-percentage.appspot.com",
+    messagingSenderId: "1036178191528",
+    appId: "1:1036178191528:web:825a1067d1d581e6013e9d",
+    measurementId: "G-V6W1FLBN99"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  console.log(firebase);
+  var database = firebase.database();
+  var ref = database.ref('percentages');
+  ref.on('value', gotData, errData);
+
+  function gotData(data){
+  // console.log(data);
+  var percentages = data.val();
+  var keys = Object.keys(percentages);
+  console.log(keys);
+  for(var i = 0; i < keys.length; i++){
+    var k =keys[i];
+    var name = percentages[k].name;
+    var percentage = percentages[k].percentage;
+    let nameByPercent = name + ":" + percentage;
+    let list = document.getElementById("percentage-list");
+    list.appendChild(createMenuItem(nameByPercent))
+    
+    //console.log(name, percentage);
+  }
+
+  }
+
+  function errData(err){
+    console.log('Error!')
+    console.log(err);
+    
+  }
+
+  var data = {
+    name: nameInputLoweCase,
+    percentage: pPercentage
+  }
+  console.log(data);
+  ref.push(data);
+ 
+  
+/////////////////////////////////////////////FIRE BASE END//////////////////////////////
     }
     
     x += 1
@@ -358,7 +347,7 @@ $.ajax(settings).error(function (response) {
   }
   //console.log(classDurationInput);
 
-  event.preventDefault();
+  
 
     // handle the form data
 });
@@ -378,4 +367,9 @@ function dataURLtoFile(dataurl, filename) {
   return new File([u8arr], filename, {type:mime});
 }
 
+function createMenuItem(getList) {
+  let li = document.createElement('li');
+  li.textContent = getList;
+  return li;
+}
   
