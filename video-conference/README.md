@@ -6,8 +6,8 @@ This sample code demonstrates a client/server architecture running on <a href="h
 
 When a peer visits <a href="http://127.0.0.1:1337/" target="_blank">http://127.0.0.1:1337/</a>, a new room url is generated, which can then be used to invite others to the video conference.
 
-Below is a screenshot of a sample room (<a href="http://127.0.0.1:1337/jk4qhh" target="_blank">http://127.0.0.1:1337/jk4qhh</a>) with four users participating in a video conference:<br>
-<img src="https://cloud.githubusercontent.com/assets/10542894/7550897/538ec66a-f674-11e4-9f52-b0f5a5b9911d.png" width="450"/>
+A sample room (<a href="http://127.0.0.1:1337/jk4qhh" target="_blank">http://127.0.0.1:1337/jk4qhh</a>) with four users participating in a video conference:<br>
+
 
 
 At the moment WebRTC is supported only by a limited number of browsers: Chrome, Firefox and Opera.
