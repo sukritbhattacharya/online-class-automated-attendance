@@ -15,12 +15,17 @@
   firebase.initializeApp(firebaseConfig);
   //firebase.analytics();
   console.log(firebase);
+  var database = firebase.database();
+  var ref_to_attendance = database.ref('attendance')
+  var date = []
+
+
+
 
 
 
 let form  = document.getElementById('form');
 document.getElementById("video").style.display = "none";
-
 form.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -29,6 +34,12 @@ form.addEventListener('submit', (event) => {
   let classDurationInput = document.getElementById("class-duration").value
   let nameINput = document.getElementById("enter-name").value
   let nameInputLoweCase = nameINput.toLowerCase();
+  let dict = {}
+  dict[nameInputLoweCase.toString()]=
+    {
+      name:nameInputLoweCase.toString()
+    }
+  var some = ref_to_attendance.push(dict).key;
   console.log(classDurationInput);
   console.log(nameInputLoweCase);
 
@@ -84,6 +95,7 @@ video.addEventListener('playing', () => {
   //var endcount = 4
   var x  = 1
   var id = NaN
+  
   id = setInterval(async () => {
     console.log("count",x)
     
@@ -123,22 +135,35 @@ var requestOptions = {
 
 fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOptions)
   .then(function(response) { 
-  //  console.log(response.body);
+  //  console.log("inside the fetch then of api request");
  
   let status = response.status;
   //  console.log(status);
+  let responsetext = {                  //how to do it in array form
+    "200":"success",
+    "404":"Face Recognition Failed!",
+    "500":"Server error!",
+    "424":"Failed Dependency",
+    "409":"Conflict Error.",
+  }
 
   let statusText = response.statusText;
-  //  console.log(v);
+  //  console.log();
+   ref_to_attendance.child(some).child(nameInputLoweCase).push(
+    {
+        "timestamp":new Date().toString(),
+        "response":responsetext[status.toString()]
+    }
+    )
     if(status == 200) {
       document.getElementById("status").innerHTML = status.toString() +" "+ statusText +" "+ "Success!";
       console.log(statusText);
     }
-    if(status == 404 || status == 424 || status == 500){
+    if(status == 404 || status == 424 || status == 500 || status == 409 || status == 406 ){
       document.getElementById("status").innerHTML = status.toString() +" "+ statusText;
       document.getElementById("status").style.color = "red";
+      
       console.log(statusText);
-
     }
   /*if(status == 404){
     console.log("face recognition failed")
@@ -168,6 +193,7 @@ fetch("https://staging-preprod.vishwamcorp.com/v2/single_gesture_ios", requestOp
     {
       acount+=1;
       absent.push(acount);
+      let absentLength = absent.length;
       let canvas2 = document.getElementById("gameCanvas").getContext('2d')
       console.log(canvas2);
       canvas2.drawImage(video,0,0)
@@ -180,48 +206,11 @@ image.src = c.toDataURL();
 console.log(image.src)
 var fileType =dataURLtoFile(image.src, 'absent.png');
 var storage = firebase.storage();
-var storageRef = storage.ref();
-var imagesRef = storageRef.child(new Date() + " " + 'unknown').put(fileType);
+var storageRef = storage.ref('DetectionFailed');
+var imagesRef = storageRef.child(nameINput + " " + "Absent:"+ " "+ absentLength + " "+ new Date() ).put(fileType);
     }
 
-// function dataURLtoFile(dataurl, filename) {
- 
-//   var arr = dataurl.split(','),
-//       mime = arr[0].match(/:(.*?);/)[1],
-//       bstr = atob(arr[1]), 
-//       n = bstr.length, 
-//       u8arr = new Uint8Array(n);
-      
-//   while(n--){
-//       u8arr[n] = bstr.charCodeAt(n);
-//   }
-  
-//   return new File([u8arr], filename, {type:mime});
-// }
 
-
-/*function b64toBlob(dataURI) {
-
-  var byteString = atob(dataURI.split(',')[1]);
-  var ab = new ArrayBuffer(byteString.length);
-  var ia = new Uint8Array(ab);
-
-  for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-  }
-  return new Blob([ab], { type: 'image/jpeg' });
-}*/
-    
-  
-      
-      //uploadImage(dispImgAbsent); 
-      /*function fn() {
-        const ref = firebase.storage().ref();
-        ref.child(new Date() + '-' + 'base64').putString(image.src, 'data_url').then(function(snapshot) {
-        console.log('Uploaded a data_url string!');
-        alert("Image Uploaded")
-     });
-     }; */
 
     
     
@@ -274,7 +263,6 @@ var imagesRef = storageRef.child(new Date() + " " + 'unknown').put(fileType);
   // firebase.initializeApp(firebaseConfig);
   // firebase.analytics();
   // console.log(firebase);
-  var database = firebase.database();
   var ref = database.ref('percentages');
   ref.on('value', gotData, errData);
 
@@ -324,11 +312,7 @@ var imagesRef = storageRef.child(new Date() + " " + 'unknown').put(fileType);
 
     
   }
-  //console.log(classDurationInput);
-
   
-
-    // handle the form data
 });
 //////////////////////////////////////////////////////base64 to file format
 function dataURLtoFile(dataurl, filename) {
@@ -351,30 +335,3 @@ function createMenuItem(getList) {
   li.textContent = getList;
   return li;
 }
-/*function uploadImage(absFile){
-  const ref1 = firebase.storage().ref()
-
-  const storageFile = absFile;
-
-  const stuName = +new Date() + "-" + storageFile.name;
-
-  const metadata = {
-    contentType: file.type
-  };
-
-  const task = ref1.child(stuName).put(storageFile, metadata);
-  task
-  .then(snapshot => snapshot.ref.getDownloadURL())
-  .then(url => {
-    console.log(url);
-  //  document.querySelector("#image").src = url;
-  })
-  .catch(console.error);} */
-
- /*function fn() {
-   const ref = firebase.storage().ref();
-   ref.child(new Date() + '-' + 'base64').putString(image.src, 'data_url').then(function(snapshot) {
-   console.log('Uploaded a data_url string!');
-   alert("Image Uploaded")
-});
-};*/
